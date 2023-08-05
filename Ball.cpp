@@ -1,15 +1,22 @@
 #include "Ball.hpp"
 #include <cmath>
 
-Ball::Ball(const Point& center, const Color& color, const double radius, const Velocity& velocity, bool is_collidable )
-     : center_(center), color_(color), radius_(radius), velocity_(velocity), is_collidable_(is_collidable){}
+Ball::Ball(const Point& center, const Color& color, const double radius,
+            const Point& velocity, bool is_collidable )
+     : center_(center), 
+     color_(color), 
+     radius_(radius), 
+     velocity_(velocity), 
+     is_collidable_(is_collidable){
+        mass_ = M_PI * pow(radius_, 3) * 4. / 3;
+     }
 
 /**
  * Задает скорость объекта
  * @param velocity новое значение скорости
  */
 void Ball::setVelocity(const Velocity& velocity) {
-    this->velocity_ = velocity;
+    velocity_ = velocity;
 }
 
 /**
@@ -36,7 +43,7 @@ void Ball::draw(Painter& painter) const {
  * @param center новый центр объекта
  */
 void Ball::setCenter(const Point& center) {
-    this->center_ = center;
+    center_ = center;
 }
 
 /**
@@ -67,5 +74,5 @@ double Ball::getMass() const {
 }
 
 bool Ball::getCollidable() const {
-    return this->is_collidable_;
+    return is_collidable_;
 }

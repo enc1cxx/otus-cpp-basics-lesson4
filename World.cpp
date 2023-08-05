@@ -18,26 +18,18 @@ World::World(const std::string& worldFilePath) {
     stream >> topLeft >> bottomRight;
     physics.setWorldBox(topLeft, bottomRight);
 
-    
+    Point center;
+    Point speed_vector;
+    Color color;
+    double radius;
+    bool is_collidable;
 
     // Здесь не хватает обработки ошибок, но на текущем
     // уровне прохождения курса нас это устраивает
     while (stream.peek(), stream.good()) {
-
-        Point center;
-        Point speed_vector;
-        Color color;
-        Velocity velocity;
-
-        double radius;
-
-        bool isCollidable;
         // Читаем координаты центра шара (x, y) и вектор
         // его скорости (vx, vy)
         stream >> center >> speed_vector;
-
-        //Тут будто бы тоже можно было как-то покрасивее сделать, но не сообразил
-        velocity.setVector(speed_vector);
 
         // Читаем три составляющие цвета шара
         stream >> color;
@@ -49,15 +41,11 @@ World::World(const std::string& worldFilePath) {
         // указывает, требуется ли обрабатывать пересечение
         // шаров как столкновение. Если true - требуется.
         // В базовой части задания этот параметр
-        stream >> std::boolalpha >> isCollidable;
-
-        // Создание объекта класса Ball со свойствами, прочитанными
-        // выше, и его помещения в контейнер balls     
-        Ball ball(center, color, radius, velocity, isCollidable);
+        stream >> std::boolalpha >> is_collidable;
 
         // Добавляем ball в конец контейнера вызовом
-        // balls.push_back(ball);
-        balls.push_back(ball);
+        // balls.emplace_back(const Point&, const Color&, const double, const Point&, bool)
+        balls.emplace_back(center, color, radius, speed_vector, is_collidable);
     }
 }
 
@@ -70,6 +58,10 @@ void World::show(Painter& painter) const {
     // Вызываем отрисовку каждого шара
     for (const Ball& ball : balls) {
         ball.draw(painter);
+    }
+
+    for (const Dust& dust : dusts) {
+        dust.draw(painter);
     }
 }
 
@@ -95,5 +87,5 @@ void World::update(double time) {
     const auto ticks = static_cast<size_t>(std::floor(time / timePerTick));
     restTime = time - double(ticks) * timePerTick;
 
-    physics.update(balls, ticks);
+    physics.update(balls, dusts, ticks);
 }

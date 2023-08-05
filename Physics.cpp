@@ -1,4 +1,5 @@
 #include "Physics.h"
+#include "World.h"
 
 double dot(const Point& lhs, const Point& rhs) {
     return lhs.x * rhs.x + lhs.y * rhs.y;
@@ -11,20 +12,19 @@ void Physics::setWorldBox(const Point& topLeft, const Point& bottomRight) {
     this->bottomRight = bottomRight;
 }
 
-void Physics::update(std::vector<Ball>& balls, const size_t ticks) const {
+void Physics::update(std::vector<Ball>& balls, std::vector<Dust>& dusts, const size_t ticks) const {
 
     for (size_t i = 0; i < ticks; ++i) {
         move(balls);
         collideWithBox(balls);
-        collideBalls(balls);
+        collideBalls(balls, dusts);
     }
 }
 
-void Physics::collideBalls(std::vector<Ball>& balls) const {
+void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) const {
     for (auto a = balls.begin(); a != balls.end(); ++a) {
         for (auto b = std::next(a); b != balls.end(); ++b) {
-
-            if(a->getCollidable() == true) {
+            if(a->getCollidable() && b->getCollidable()) {
                 const double distanceBetweenCenters2 =
                 distance2(a->getCenter(), b->getCenter());
                 const double collisionDistance = a->getRadius() + b->getRadius();
@@ -33,6 +33,11 @@ void Physics::collideBalls(std::vector<Ball>& balls) const {
 
                 if (distanceBetweenCenters2 < collisionDistance2) {
                     processCollision(*a, *b, distanceBetweenCenters2);
+
+                    //
+                    std::cout << "boom!" << std::endl;
+                    Dust dust;
+                    dusts.push_back(dust);
                 }
             }
         }
@@ -42,7 +47,6 @@ void Physics::collideBalls(std::vector<Ball>& balls) const {
 void Physics::collideWithBox(std::vector<Ball>& balls) const {
     for (Ball& ball : balls) {
         if(ball.getCollidable() == true) {
-            
             const Point p = ball.getCenter();
             const double r = ball.getRadius();
             // определяет, находится ли v в диапазоне (lo, hi) (не включая границы)

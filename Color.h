@@ -3,21 +3,19 @@
 #include <iostream>
 
 class Color {
-  public:
-    Color();
-    Color(double red, double green, double blue);
-    double red() const;
-    double green() const;
-    double blue() const;
+public:
+  Color();
+  Color(double red, double green, double blue);
+  double red() const;
+  double green() const;
+  double blue() const;
 
-    void set_red(double red);
-    void set_green(double green);
-    void set_blue(double blue);
+  void set_color(double red, double green, double blue);
 
-  private:
-    double r{};
-    double g{};
-    double b{};
+private:
+  double r{};
+  double g{};
+  double b{};
 };
 
 
@@ -25,9 +23,7 @@ class Color {
 //через сеттеры
 inline std::istream& operator>>(std::istream& stream, Color& color) {
   double red, green, blue;
-    stream >> red >> green >> blue;
-    color.set_red(red);
-    color.set_green(green);
-    color.set_blue(blue);
-    return stream;
+  stream >> red >> green >> blue;
+  color.set_color(red, green, blue);
+  return stream;
 }
