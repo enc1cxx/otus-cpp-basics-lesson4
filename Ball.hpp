@@ -2,6 +2,7 @@
 #include "Painter.h"
 #include "Point.h"
 #include "Velocity.h"
+#include "Color.h"
 
 class Ball {
 public:
@@ -12,4 +13,10 @@ public:
     Point getCenter() const;
     double getRadius() const;
     double getMass() const;
+private:
+    double radius_;
+    double mass_;
+    Point center_;
+    Velocity velocity_;
+    Color color_;
 };
