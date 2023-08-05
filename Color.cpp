@@ -16,3 +16,9 @@ double Color::green() const {
 double Color::blue() const {
     return b;
 }
+
+void Color::set_color(double red, double green, double blue) {
+    r = red;
+    g = green;
+    b = blue;
+}
