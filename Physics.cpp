@@ -39,7 +39,7 @@ void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) c
                     // тут координата очень корявая, но на движущихся объектах
                     // проблем не видно. Проблема получилась с упаковкой кода ниже в функцию. Делал функцию, принимающую 
                     // 4 объекта типа Point и vector<Dust>. При отладке функция вызывалась, но ничего не отрисовывала.
-                    // Возможно конструктор для Dust нужно было сделать как-то иначе
+                    // Возможно конструктор для Dust нужно было сделать как-то иначе, но чтобы не запутать себя - лучше спрошу сразу
                     dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), (a->getVelocity().vector() +
                     b->getVelocity().vector()));
 
@@ -48,7 +48,7 @@ void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) c
 
                     dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), (b->getVelocity().vector() -
                     a->getVelocity().vector()));
-                    
+
                     dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), b->getVelocity().vector());
                     dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), a->getVelocity().vector());
                 }
