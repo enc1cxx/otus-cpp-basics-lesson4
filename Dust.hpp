@@ -1,4 +1,7 @@
 #pragma once
+
+#include <vector>
+
 #include "Painter.h"
 #include "Point.h"
 #include "Velocity.h"
@@ -18,6 +21,7 @@ public:
     void minusLifeTime();
     void minusRadius(); //пыль уменьшается в размерах во временем
     int getLifeTime() const;
+    
 
   private:
     double radius_ = 30;

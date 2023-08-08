@@ -1,15 +1,16 @@
 #include "Physics.h"
 #include "World.h"
+#include "Dust.hpp"
 
 double dot(const Point& lhs, const Point& rhs) {
     return lhs.x * rhs.x + lhs.y * rhs.y;
 }
 
-Physics::Physics(double timePerTick) : timePerTick{timePerTick} {}
+Physics::Physics(double timePerTick) : timePerTick_{timePerTick} {}
 
 void Physics::setWorldBox(const Point& topLeft, const Point& bottomRight) {
-    this->topLeft = topLeft;
-    this->bottomRight = bottomRight;
+    topLeft_ = topLeft;
+    bottomRight_ = bottomRight;
 }
 
 void Physics::update(std::vector<Ball>& balls, std::vector<Dust>& dusts, const size_t ticks) const {
@@ -36,10 +37,20 @@ void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) c
                     processCollision(*a, *b, distanceBetweenCenters2);
 
                     // тут координата очень корявая, но на движущихся объектах
-                    // проблем не видно
-                    Dust dust(((a->getCenter() + b->getCenter()) / 2), (a->getVelocity().vector() + b->getVelocity().vector()));
-                    dusts.emplace_back(dust);
-                    std::cout << dusts.size() << std::endl;
+                    // проблем не видно. Проблема получилась с упаковкой кода ниже в функцию. Делал функцию, принимающую 
+                    // 4 объекта типа Point и vector<Dust>. При отладке функция вызывалась, но ничего не отрисовывала.
+                    // Возможно конструктор для Dust нужно было сделать как-то иначе
+                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), (a->getVelocity().vector() +
+                    b->getVelocity().vector()));
+
+                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), (a->getVelocity().vector() -
+                    b->getVelocity().vector()));
+
+                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), (b->getVelocity().vector() -
+                    a->getVelocity().vector()));
+                    
+                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), b->getVelocity().vector());
+                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), a->getVelocity().vector());
                 }
             }
         }       
@@ -56,11 +67,11 @@ void Physics::collideWithBox(std::vector<Ball>& balls) const {
                 return v < lo || v > hi;
             };
 
-            if (isOutOfRange(p.x, topLeft.x + r, bottomRight.x - r)) {
+            if (isOutOfRange(p.x, topLeft_.x + r, bottomRight_.x - r)) {
                 Point vector = ball.getVelocity().vector();
                 vector.x = -vector.x;
                 ball.setVelocity(vector);
-            } else if (isOutOfRange(p.y, topLeft.y + r, bottomRight.y - r)) {
+            } else if (isOutOfRange(p.y, topLeft_.y + r, bottomRight_.y - r)) {
                 Point vector = ball.getVelocity().vector();
                 vector.y = -vector.y;
                 ball.setVelocity(vector);
@@ -72,7 +83,7 @@ void Physics::collideWithBox(std::vector<Ball>& balls) const {
 void Physics::move(std::vector<Ball>& balls) const {
     for (Ball& ball : balls) {
         Point newPos =
-            ball.getCenter() + ball.getVelocity().vector() * timePerTick;
+            ball.getCenter() + ball.getVelocity().vector() * timePerTick_;
         ball.setCenter(newPos);
     }
 }
@@ -80,7 +91,7 @@ void Physics::move(std::vector<Ball>& balls) const {
 void Physics::move(std::vector<Dust>& dusts) const {
     for (Dust& dust : dusts) {
         Point newPos =
-            dust.getCenter() + dust.getVelocity().vector() * timePerTick;
+            dust.getCenter() + dust.getVelocity().vector() * timePerTick_;
         dust.setCenter(newPos);
         dust.minusLifeTime();
         dust.minusRadius();

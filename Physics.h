@@ -18,7 +18,7 @@ class Physics {
                           double distanceBetweenCenters2) const;
 
   private:
-    Point topLeft;
-    Point bottomRight;
-    double timePerTick;
+    Point topLeft_;
+    Point bottomRight_;
+    double timePerTick_;
 };

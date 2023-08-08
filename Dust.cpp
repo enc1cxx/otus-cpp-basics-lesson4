@@ -1,9 +1,11 @@
 #include "Dust.hpp"
 #include <cmath>
 
+
 Dust::Dust(const Point& center, const Velocity& velocity)
     : center_(center), velocity_(velocity)
 {
+    
 }
 
 void Dust::draw(Painter& painter) const {
@@ -33,3 +35,5 @@ void Dust::minusRadius() {
 int Dust::getLifeTime() const {
     return life_time_;
 }
+
+
