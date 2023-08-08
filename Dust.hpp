@@ -8,12 +8,21 @@ public:
     Dust() = default;
     ~Dust() = default;
 
-    Dust(Point& center);
+    Dust(const Point& center, const Velocity& velocity);
 
     void draw(Painter& painter) const;
 
+    Velocity getVelocity() const;
+    Point getCenter() const;
+    void setCenter(const Point& center);
+    void minusLifeTime();
+    void minusRadius(); //пыль уменьшается в размерах во временем
+    int getLifeTime() const;
+
   private:
-    double radius_ = 20;
-    Color color_{100, 100, 100};
+    double radius_ = 30;
+    Color color_{0, 0, 0};
     Point center_;
+    Velocity velocity_;
+    int life_time_ = 300;
 };

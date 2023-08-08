@@ -16,6 +16,7 @@ void Physics::update(std::vector<Ball>& balls, std::vector<Dust>& dusts, const s
 
     for (size_t i = 0; i < ticks; ++i) {
         move(balls);
+        move(dusts);
         collideWithBox(balls);
         collideBalls(balls, dusts);
     }
@@ -34,13 +35,14 @@ void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) c
                 if (distanceBetweenCenters2 < collisionDistance2) {
                     processCollision(*a, *b, distanceBetweenCenters2);
 
-                    //
-                    std::cout << "boom!" << std::endl;
-                    Dust dust;
-                    dusts.push_back(dust);
+                    // тут координата очень корявая, но на движущихся объектах
+                    // проблем не видно
+                    Dust dust(((a->getCenter() + b->getCenter()) / 2), (a->getVelocity().vector() + b->getVelocity().vector()));
+                    dusts.emplace_back(dust);
+                    std::cout << dusts.size() << std::endl;
                 }
             }
-        }
+        }       
     }
 }
 
@@ -72,6 +74,27 @@ void Physics::move(std::vector<Ball>& balls) const {
         Point newPos =
             ball.getCenter() + ball.getVelocity().vector() * timePerTick;
         ball.setCenter(newPos);
+    }
+}
+
+void Physics::move(std::vector<Dust>& dusts) const {
+    for (Dust& dust : dusts) {
+        Point newPos =
+            dust.getCenter() + dust.getVelocity().vector() * timePerTick;
+        dust.setCenter(newPos);
+        dust.minusLifeTime();
+        dust.minusRadius();
+
+        for (auto it = dusts.begin(); it != dusts.end();){
+            if ((*it).getLifeTime() <= 0){
+                it = dusts.erase(it);   
+            }
+            else{
+                ++it;
+            }
+                
+        } 
+
     }
 }
 

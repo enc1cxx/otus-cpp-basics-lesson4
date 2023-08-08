@@ -13,6 +13,7 @@ class Physics {
     void collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) const;
     void collideWithBox(std::vector<Ball>& balls) const;
     void move(std::vector<Ball>& balls) const;
+    void move(std::vector<Dust>& dusts) const;
     void processCollision(Ball& a, Ball& b,
                           double distanceBetweenCenters2) const;
 
