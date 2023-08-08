@@ -9,6 +9,9 @@ class Physics {
     void setWorldBox(const Point& topLeft, const Point& bottomRight);
     void update(std::vector<Ball>& balls, std::vector<Dust>& dusts, size_t ticks) const;
 
+    void spawnDust(const Ball& a, const Ball& b,
+                   std::vector<Dust>& dusts) const;
+
   private:
     void collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) const;
     void collideWithBox(std::vector<Ball>& balls) const;

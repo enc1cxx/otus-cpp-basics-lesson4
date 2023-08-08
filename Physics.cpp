@@ -23,6 +23,18 @@ void Physics::update(std::vector<Ball>& balls, std::vector<Dust>& dusts, const s
     }
 }
 
+void Physics::spawnDust(const Ball& a, const Ball& b, std::vector<Dust>& dusts) const {
+    // грубая оценка точки столкновения
+    const Point collisionPointEst = (a.getCenter() + b.getCenter()) / 2;
+
+    const Point av = a.getVelocity().vector();
+    const Point bv = b.getVelocity().vector();
+
+    for (const Point& vec: {av + bv, av - bv, bv - av, bv, av}) {
+        dusts.emplace_back(collisionPointEst, vec);
+    }
+}
+
 void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) const {
     for (auto a = balls.begin(); a != balls.end(); ++a) {
         for (auto b = std::next(a); b != balls.end(); ++b) {
@@ -36,21 +48,7 @@ void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dusts) c
                 if (distanceBetweenCenters2 < collisionDistance2) {
                     processCollision(*a, *b, distanceBetweenCenters2);
 
-                    // тут координата очень корявая, но на движущихся объектах
-                    // проблем не видно. Проблема получилась с упаковкой кода ниже в функцию. Делал функцию, принимающую 
-                    // 4 объекта типа Point и vector<Dust>. При отладке функция вызывалась, но ничего не отрисовывала.
-                    // Возможно конструктор для Dust нужно было сделать как-то иначе, но чтобы не запутать себя - лучше спрошу сразу
-                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), (a->getVelocity().vector() +
-                    b->getVelocity().vector()));
-
-                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), (a->getVelocity().vector() -
-                    b->getVelocity().vector()));
-
-                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), (b->getVelocity().vector() -
-                    a->getVelocity().vector()));
-
-                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), b->getVelocity().vector());
-                    dusts.emplace_back(((a->getCenter() + b->getCenter()) / 2), a->getVelocity().vector());
+                    spawnDust(*a, *b, dusts);
                 }
             }
         }       
